@@ -1775,12 +1775,12 @@ trait DeltaErrorsBase
   }
 
   def changeColumnMappingModeOnOldProtocol(oldProtocol: Protocol): Throwable = {
-    new DeltaColumnMappingUnsupportedException(
+    val adviceMsg = columnMappingAdviceMessage
+    new DeltaAnalysisException(
       errorClass = "DELTA_UNSUPPORTED_COLUMN_MAPPING_PROTOCOL",
       messageParameters = Array(
         s"${DeltaConfigs.COLUMN_MAPPING_MODE.key}",
-        s"${DeltaColumnMapping.MIN_PROTOCOL_VERSION.toString}",
-        s"$oldProtocol"))
+        adviceMsg))
   }
 
   private def columnMappingAdviceMessage: String = {

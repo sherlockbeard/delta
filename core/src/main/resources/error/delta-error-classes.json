@@ -1383,15 +1383,7 @@
       "",
       "Your current table protocol version does not support changing column mapping modes",
       "using <config>.",
-      "",
-      "Required Delta protocol version for column mapping:",
-      "<requiredVersion>",
-      "Your table's current Delta protocol version:",
-      "<currentVersion>",
-      "",
-      "Please upgrade your table's protocol version using ALTER TABLE SET TBLPROPERTIES and try again.",
-      "",
-      ""
+      "<advice>"
     ],
     "sqlState" : "0A000"
   },
