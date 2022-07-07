@@ -410,14 +410,13 @@ trait DeltaErrorsSuiteBase
     }
     {
       val e = intercept[DeltaAnalysisException] {
-        throw DeltaErrors.changeColumnMappingModeOnOldProtocol(Protocol())
+        throw DeltaErrors.changeColumnMappingModeOnOldProtocol()
       }
       val cmd = "ALTER TABLE SET TBLPROPERTIES"
       assert(e.getMessage ==
         s"""
            |Your current table protocol version does not support changing column mapping modes
            |using delta.columnMapping.mode.
-           |
            |Please upgrade your Delta table to reader version 2 and writer version 5
            | and change the column mapping mode to 'name' mapping. You can use the following command:
            |

@@ -125,7 +125,7 @@ trait DeltaColumnMappingBase extends DeltaLogging {
             .getOrElse(oldProtocol.minWriterVersion))
 
         if (!satisfyColumnMappingProtocol(newProtocol)) {
-          throw DeltaErrors.changeColumnMappingModeOnOldProtocol(oldProtocol)
+          throw DeltaErrors.changeColumnMappingModeOnOldProtocol()
         }
       }
     }

@@ -1382,8 +1382,7 @@
     "message" : [
       "",
       "Your current table protocol version does not support changing column mapping modes",
-      "using <config>.",
-      "<advice>"
+      "using <config>.<advice>"
     ],
     "sqlState" : "0A000"
   },
