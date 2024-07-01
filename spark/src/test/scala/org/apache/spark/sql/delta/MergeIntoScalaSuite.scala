@@ -180,6 +180,12 @@ class MergeIntoScalaSuite extends MergeIntoSuiteBase
     }
   }
 
+  test("Save with the new Stat") {
+    Seq((1, 10), (2, 20), (4, 40)).toDF("key", "the.value").write.format("delta").mode("append")
+      .save("./check_path")
+
+  }
+
   test("updateAll and insertAll with columns containing dot") {
     withTable("source") {
       append(Seq((1, 10), (2, 20), (4, 40)).toDF("key", "the.value"), Nil) // target

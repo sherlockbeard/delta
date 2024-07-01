@@ -275,6 +275,15 @@ trait StatisticsCollection extends DeltaLogging {
       collectStats(NULL_COUNT, statCollectionPhysicalSchema) {
         case (c, _, true) => sum(when(c.isNull, 1).otherwise(0))
         case (_, _, false) => count(new Column("*"))
+      },
+      collectStats(AVERAGE, statCollectionPhysicalSchema) {
+        // Truncate string min values as necessary
+        case (c, SkippingEligibleDataType(StringType), true) =>
+          substring(avg(c), 0, stringPrefix)
+
+        // Collect all numeric min values
+        case (c, SkippingEligibleDataType(_), true) =>
+          avg(c)
       }) ++ tightBoundsColOpt
 
     struct(statCols: _*).as("stats")
@@ -314,8 +323,22 @@ trait StatisticsCollection extends DeltaLogging {
       if (fields.nonEmpty) Some(StructType(fields)) else None
     }
 
+    def getAvgArraySchema(schema: StructType): Option[StructType] = {
+      val fields = schema.fields.flatMap {
+        case f@StructField(_, dataType: StructType, _, _) =>
+          getAvgArraySchema(dataType).map { newDataType =>
+            StructField(DeltaColumnMapping.getPhysicalName(f), newDataType)
+          }
+        case f@StructField(_, SkippingEligibleDataType(dataType), _, _) =>
+          Some(StructField(DeltaColumnMapping.getPhysicalName(f), dataType))
+        case _ => None
+      }
+      if (fields.nonEmpty) Some(StructType(fields)) else None
+    }
+
     val minMaxStatsSchemaOpt = getMinMaxStatsSchema(statCollectionPhysicalSchema)
     val nullCountSchemaOpt = getNullCountSchema(statCollectionPhysicalSchema)
+    val avgSchemaOpt = getAvgArraySchema(statCollectionPhysicalSchema)
     val tightBoundsFieldOpt =
       Option.when(deletionVectorsSupported)(TIGHT_BOUNDS -> BooleanType)
 
@@ -324,6 +347,7 @@ trait StatisticsCollection extends DeltaLogging {
       minMaxStatsSchemaOpt.map(MIN -> _) ++
       minMaxStatsSchemaOpt.map(MAX -> _) ++
       nullCountSchemaOpt.map(NULL_COUNT -> _) ++
+      avgSchemaOpt.map(AVERAGE -> _) ++
       tightBoundsFieldOpt
 
     StructType(fields.map {
