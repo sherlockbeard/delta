@@ -45,6 +45,7 @@ object DeltaStatistics {
    * This should only be present in tables with Deletion Vectors enabled.
    */
   val TIGHT_BOUNDS = "tightBounds"
+  val AVERAGE = "average"
 
-  val ALL_STAT_FIELDS = Seq(NUM_RECORDS, MIN, MAX, NULL_COUNT, TIGHT_BOUNDS)
+  val ALL_STAT_FIELDS = Seq(NUM_RECORDS, MIN, MAX, NULL_COUNT, AVERAGE, TIGHT_BOUNDS)
 }
